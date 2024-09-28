@@ -1,0 +1,8 @@
+# Ignore environment variables
+.env
+
+# Ignore service account keys
+dealer-2f344-firebase-adminsdk-jchlo-ab0fcd8a52.json
+
+# Ignore other sensitive files
+/path/to/other/secrets.json
