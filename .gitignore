@@ -2,7 +2,7 @@
 .env
 
 # Ignore service account keys
-dealer-2f344-firebase-adminsdk-jchlo-ab0fcd8a52.json
+/dealer-2f344-firebase-adminsdk-jchlo-ab0fcd8a52.json
 
 # Ignore other sensitive files
-/home/aiimtech/Documents/Foodcart/Backend/constants.ts
+/constants.ts
