@@ -1,0 +1,72 @@
+Dealers:
+
+{
+ "name": "nageswaran",
+    "username": "nages",
+    "password": "Nages&es2330",
+    "mobileno": "6359751234",
+    "emailid": "nagesh@aiimtech.in",
+    "address": "16,pillaiyarkovil st,sivakasi",
+    "reset": ""
+    }
+$2b$12$fGvk4K0y5Zc9qIsl5m2rz.UXwpEZTFdVJdwzk60dyRtye7prwQpGq
+    {
+    "userid":2,
+     "name":"satish",
+    "username":"satish",
+    "password":"satish1330",
+    "mobileno":"6396451234",
+    "emailid":"satish@aiimtech.in",
+    "address":"56,kochadai,madurai",
+    "reset": ""
+    }
+$2b$12$yxq43yC8IGz6YQIRsedsvu98GbHtZRD8kaS6dlQdyyYxvgesGNe5q
+
+{
+"userid":3,
+"name":"narmadha",
+"username":"narmadha",
+"password":"narmadha0330",
+"mobileno":"7964751234",
+"emailid":"narmadha@aiimtech.in",
+"address":"25,new road,madurai",
+    "reset": ""
+}
+
+ {
+ "name":"dheepan",
+"username":"dheepan",
+"password":"Dheepan&0330",
+"mobileno":"9659751256",
+"emailid":"deepan@aiimtech.in",
+"address":"79,pillaiyarkovil st,madurai",
+    "reset": "",
+}
+$2b$12$D6vHA6syKHHvZREA9eK0GewtmtGHIm3NltjkX.Cp/o9TpmP3Je.qm
+
+{
+"name":"siddhu",
+"username":"siddhu",
+"password":"siddharth2330",
+"mobileno":"6359751974",
+"emailid":"siddharth@aiimtech.in",
+"address":"79,maatuthavani ,madurai",
+    "reset": ""
+}
+{
+ "name": "nageswaran",
+    "username": "nageswar",
+    "password": "Nages&es2330",
+    "mobileno": "6359751234",
+    "emailid": "nagesh@aiimtech.com",
+    "address": "16,pillaiyarkovil st,sivakasi",
+    "reset": ""
+    }
+
+twilio code:
+UHN27PBKDX5DW3TSVRKGD72X
+
+mobileno:
++14323025832
+
+

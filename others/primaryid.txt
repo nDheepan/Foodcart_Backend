@@ -1,0 +1,85 @@
+1.
+CREATE OR REPLACE FUNCTION reset_sequence()
+RETURNS TRIGGER AS $$
+BEGIN
+    EXECUTE format('ALTER SEQUENCE user_userid_seq RESTART WITH 1');
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER reset_sequence_trigger
+AFTER DELETE ON "user"
+FOR EACH STATEMENT
+EXECUTE FUNCTION reset_sequence();
+
+2.
+
+CREATE OR REPLACE FUNCTION reset_sequence_after_truncate()
+RETURNS TRIGGER AS $$
+BEGIN
+    EXECUTE format('ALTER SEQUENCE customer_id_seq RESTART WITH 1');
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER reset_sequence_trigger_after_truncate
+AFTER TRUNCATE ON customer
+EXECUTE FUNCTION reset_sequence_after_truncate();
+
+
+
+
+
+
+
+INSERT INTO customer(
+	 name,pic)
+	VALUES ('kumar','["C:/Users/ages/Downloads/logo.png","C:/Users/nages/OneDrive/Desktop/logos/bowl.png","C:/Users/nages/Downloads/icons8-whipped-cream-ios-17-filled/icecream.png"]');
+
+SELECT jsonb_array_elements_text(pic) AS image_path
+FROM customer;
+
+
+
+
+SELECT (pic->1) AS image_path
+FROM customer;
+
+
+
+
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity()
+export class Image {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'jsonb' })
+  image_paths: Record<string, any>; // Assuming the structure of the JSONB column can be arbitrary
+}
+
+export class ImageDto {
+  id: number;
+  image_paths: Record<string, any>;
+}
+
+
+
+
+
+update timestampz
+CREATE FUNCTION completed_timestamp() RETURNS trigger AS $$
+   LANGUAGE plpgsql
+BEGIN
+  IF new.complete_flag = 1 and old.completed_flag = 0 THEN
+    new.complete_time := current_timestamp;
+  END IF;
+  RETURN new;
+END;
+$$;
+
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE OF completed_flag ON tbl_pXXXX
+FOR EACH ROW 
+EXECUTE PROCEDURE completed_timestamp(); 

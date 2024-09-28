@@ -1,0 +1,164 @@
+create table user(
+id serial primary key,
+name varchar(255) not null,
+username varchar(255) unique not null,
+password varchar(255) not null,
+mobile bigint not null,
+emailid varchar(255) not null,
+address_home varchar(255) not null,
+address_office varchar(255) not null, or same as home
+latitude varchar(255) not null,
+longitude varchar(255)  not null,
+created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+)
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE dealer_entity(
+    id SERIAL PRIMARY KEY,
+    restaurant_name VARCHAR(255) NOT NULL,
+    restaurant_type VARCHAR(255) NOT NULL,
+    restaurant_category VARCHAR(255) NOT NULL,
+    restaurant_mobileno BIGINT NOT NULL,//
+    restaurant_address VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    user_address VARCHAR(255) NOT NULL,
+    user_mobile BIGINT NOT NULL,//
+    emailid VARCHAR(255) NOT NULL,
+    opens_at VARCHAR(30) NOT NULL,
+    closes_at VARCHAR(30) NOT NULL,
+    days_available VARCHAR(255) NOT NULL,
+    latitude VARCHAR(255) NOT NULL,
+    longitude VARCHAR(255) NOT NULL,
+    timing VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+    name_invoice VARCHAR(255) NOT NULL,
+    email_invoice VARCHAR(255) NOT NULL,
+    mobile_invoice VARCHAR(255) NOT NULL,
+    no_pan VARCHAR(255) NOT NULL,
+    name_pan VARCHAR(255) NOT NULL,
+    address_pan VARCHAR(255) NOT NULL,
+    no_gst VARCHAR(255) NOT NULL,
+    no_fssai BIGINT NOT NULL,
+    expdate_fssai VARCHAR(255) NOT NULL,
+    images TEXT NOT NULL,
+    promocode varchar(255),
+    promo_valid_upto varchar(255)
+    reset VARCHAR(255)
+
+
+);
+
+
+//active,star
+
+#dealer products
+CREATE TABLE dealermenu (
+  id SERIAL PRIMARY KEY,
+  dealerid INT,
+  item_name VARCHAR(255) NOT NULL,
+  item_desc varchar(255) NOT NULL,
+  item_type VARCHAR(255) NOT NULL,
+  item_category VARCHAR(255) NOT NULL,
+  item_preference VARCHAR(255) NOT NULL,
+  price DOUBLE PRECISION NOT NULL,
+  is_available BOOLEAN DEFAULT TRUE NOT NULL,
+  images text not null,
+  CONSTRAINT fk_dealer FOREIGN KEY (dealerid) REFERENCES dealer_entity(id)------> one to one
+  ON DELETE CASCADE
+
+);
+
+
+
+
+
+create table ordermanagement(
+id serial primary key,
+dealerid integer,
+customerid integer,
+deliverystatus varchar(255) not null,
+total double precision NOT NULL,
+created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+cancelled_at TIMESTAMP WITH TIME ZONE,
+deliver_to varchar(255) NOT NULL, 
+CONSTRAINT fk_dealer FOREIGN KEY (dealerid) REFERENCES dealer_entity(id) ON DELETE SET DEFAULT,---->one to one
+CONSTRAINT fk_customer FOREIGN KEY (customerid) REFERENCES customer(id) ON DELETE SET DEFAULT------->one to one
+);
+
+
+
+
+create table orderitem(--->
+id serial primary key,
+orderid integer,
+itemid integer,
+item_qty,
+created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+modified_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+CONSTRAINT fk_order FOREIGN KEY (orderid) REFERENCES ordermanagement(id)ON DELETE CASCADE----->one to one
+constraint fk_menu foreign key(itemid) references dealermenu(id) ON DELETE SET NULL;------->one to many
+)
+
+
+------------------------------------------session table
+create table itemsCart(
+id serial primary key,
+customerid integer,
+itemid integer,
+item_qty integer(100) not null,
+item_price integer not null,
+order_instruction varchar(255) ,
+coupenid integer,
+CONSTRAINT fk_dealermenu FOREIGN KEY (itemid) REFERENCES dealer_menu(id)ON DELETE CASCADE,
+CONSTRAINT fk_customer FOREIGN KEY (customerid) REFERENCES customer(id) ON DELETE SET DEFAULT
+);
+
+----------------------------------------------------
+
+
+);
+create table promocode(
+
+
+
+
+
+)
+
+
+
+{
+"item_name":"",
+"item_desc":"",
+"item_type":"",
+"item_category":"",
+"item_preference":"",
+"price":"",
+"rating":"",
+"is_available":boolean,
+"images"
+}
+
+
+
+ itemid productid  orderid
+  1         1           1 
+  2         2           1
+  65        1           2
+  
+
+

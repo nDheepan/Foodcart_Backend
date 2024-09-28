@@ -1,0 +1,3 @@
+1.solution for retriving records from service in strategy is Must check valid providers are include in root module and must inject it in strategy.
+2.solution for not-null constraint violets and cannot read undefined or null property  is completely check datatype definition must.
+

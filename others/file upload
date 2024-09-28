@@ -1,0 +1,230 @@
+    
+///controller
+
+private generateRandomFilename(): string {
+      const randomname =Array(10)
+         .fill(null)
+         .map(() => Math.round(Math.random() * 16).toString(16))
+         .join('');
+         return randomname;
+     }
+    @Post('create')
+    async create(
+      @Body() createDealerProductDto: CreateDealerProductDto,
+      @Body() createCategoryDto: CreateCategoryDto,
+      @Req() req: any,
+      @Res() res: Response,
+      @UploadedFile(
+       
+        
+      )file:Express.Multer.File
+    ){
+
+      
+     
+      createDealerProductDto.dealer = req.user.dealerid;
+      const images = req.files['images'];
+      const video  = req.files['shorts'];
+      const imgext = extname(images.originalFilename);
+      const imgname = `${this.generateRandomFilename()}${imgext}`;
+      const vdoext = extname(video.originalFilename);
+      const vdoname =`${this.generateRandomFilename()}${vdoext}`;    
+      const imgDir =images.path;
+      const vdoDir = video.path;     
+
+      const destinationvdoDir = `//home/aiimtech05/projects/officework-multiauth/officework/assets/shorts/${vdoname}`
+      const destinationimgDir = `/home/aiimtech05/projects/officework-multiauth/officework/assets/images/${imgname}`;
+
+      fs.move(imgDir, destinationimgDir, { overwrite: true }, err => {
+        if (err) return console.error(err)
+        console.log('success!')
+      });
+      fs.move(vdoDir, destinationvdoDir, { overwrite: true }, err => {
+        if (err) return console.error(err)
+        console.log('success!')
+      });
+     
+      createDealerProductDto.images = destinationimgDir;
+      createDealerProductDto.shorts = destinationvdoDir;
+      const item = await this.dealerProductsService.create(createDealerProductDto);
+      const category = await this.dealerProductsService.createCategory(item.id, createCategoryDto);
+      
+      if (item && category) {
+        return res.status(HttpStatus.OK).json({ message: 'Records added successfully' });
+      } else if (item || category) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Item or category' });
+      } else {
+        throw new BadRequestException('No results found');
+      }
+    
+    }
+
+/main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { tmpdir } from 'os';
+import * as formdata from 'express-form-data'
+import { json } from 'body-parser';
+import * as fs from 'fs-extra'
+const os = require('os');
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule,{
+  });
+
+  const options = {uploadDir:os.tmpdir(),autoclean:true}
+
+app.useGlobalPipes(new ValidationPipe({
+  whitelist:true,
+  transform:true,
+  transformOptions:{enableImplicitConversion:true}
+
+}));
+
+app.use(
+
+ formdata.parse(options),
+formdata.format(),
+json({type:['*/*']}),
+  
+)
+  await app.listen(3005);
+}
+bootstrap();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------fileupload validation------------------------------------------------
+plugins:
+1.npm install @nestjs/common multer class-validator
+2.npm install fluent-ffmpeg
+
+
+
+// file-upload.dto.ts
+// file-upload.dto.ts
+import { IsNotEmpty, IsIn, IsNumber, Min } from 'class-validator';
+
+export class FileUploadDto {
+  @IsNotEmpty()
+  @IsIn(['image', 'video'])
+  type: 'image' | 'video';
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  size: number;
+
+  file: any;
+}
+
+
+
+// upload.controller.ts
+import { Controller, Post, UploadedFile, Body, BadRequestException } from '@nestjs/common';
+import { UploadService } from './upload.service';
+import { FileUploadDto } from './file-upload.dto';
+
+@Controller('upload')
+export class UploadController {
+  constructor(private readonly uploadService: UploadService) {}
+
+  @Post()
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: FileUploadDto): Promise<string> {
+    // Perform validation
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    if (body.type === 'image') {
+      if (!['image/jpeg', 'image/png'].includes(file.mimetype)) {
+            throw new BadRequestException('Invalid file type for image upload. Only JPEG and PNG images are allowed.');
+      }
+    } else if (body.type === 'video') {
+      if (!['video/mp4', 'video/quicktime'].includes(file.mimetype)) {
+        throw new BadRequestException('Invalid file type for video upload. Only MP4 and QuickTime videos are allowed.');
+      }
+    } else {
+      throw new BadRequestException('Invalid file type specified');
+    }
+
+    if (file.size > body.size) {
+      throw new BadRequestException('File size exceeds the specified limit');
+    }
+
+    // Pass the file to the service for further processing
+    return await this.uploadService.uploadFile(file);
+  }
+}
+
+
+------------------------------------------------------------------video duration length------------------------------------------------
+
+// upload.service.ts
+import * as ffmpeg from 'fluent-ffmpeg';
+
+@Injectable()
+export class UploadService {
+  async validateVideoLength(filePath: string, maxLength: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      ffmpeg.ffprobe(filePath, (err, metadata) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const durationInSeconds = metadata.format.duration;
+        const durationInMilliseconds = durationInSeconds * 1000;
+
+        if (durationInMilliseconds > maxLength) {
+          resolve(false); // Video exceeds maximum length
+        } else {
+          resolve(true); // Video is within the acceptable length
+        }
+      });
+    });
+  }
+}
+
+// upload.controller.ts
+import { Controller, Post, UploadedFile, Body, BadRequestException } from '@nestjs/common';
+import { UploadService } from './upload.service';
+import { FileUploadDto } from './file-upload.dto';
+
+@Controller('upload')
+export class UploadController {
+  constructor(private readonly uploadService: UploadService) {}
+
+  @Post()
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: FileUploadDto): Promise<string> {
+    // Perform validation for type and size
+    // (assuming you've already implemented type and size validation)
+
+    // Perform validation for video length
+    if (body.type === 'video') {
+      const isLengthValid = await this.uploadService.validateVideoLength(file.path, body.maxLength);
+      if (!isLengthValid) {
+        throw new BadRequestException('Video duration exceeds the maximum allowed length');
+      }
+    }
+
+    // Pass the file to the service for further processing
+    return await this.uploadService.uploadFile(file);
+  }
+}
+
+

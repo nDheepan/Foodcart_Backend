@@ -1,0 +1,154 @@
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { password_Entity } from "./password.entity";
+import { passwordResetController } from "./password_reset.controller";
+import { passwordResetService } from "./password_reset.service";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { dealerDetailsModule } from "../dealer_details/dealer_details.module";
+import { DealerDetailsService } from "../dealer_details/dealer_details.service";
+import { forgetStrategy } from "src/strategies/jwt.strtegy";
+
+@Module({
+  imports:[dealerDetailsModule,TypeOrmModule.forFeature([password_Entity]),
+MailerModule.forRoot({
+  transport:{
+    host:'localhost',
+    port:1025
+  },
+  defaults:{
+    from:'admin@example.com',
+  }
+
+})
+],
+  controllers:[passwordResetController],
+  providers:[passwordResetService,forgetStrategy,],
+  exports:[passwordResetService]
+
+})
+
+
+export class passwordResetModule{}
+
+
+
+
+import { Repository } from "typeorm";
+import { password_Entity } from "./password.entity";
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+
+@Injectable()
+export class passwordResetService{
+constructor(
+    @InjectRepository(password_Entity)
+    private  PasswordRepository:Repository<password_Entity>
+){}
+
+    async create(body:any){
+        await this.PasswordRepository.save(body);
+    }
+
+    async findOne(data:string){
+        const user = await this.PasswordRepository.findOne({where:{token:data}});
+        return user;
+    }
+    
+}
+
+
+
+import { Body, Controller,Post, UnauthorizedException, UseGuards } from "@nestjs/common";
+import * as crypto from 'crypto'
+import { passwordResetService } from "./password_reset.service";
+import { MailerService } from "@nestjs-modules/mailer";
+import { DealerDetailsService } from "../dealer_details/dealer_details.service";
+import * as bcrypt from 'bcrypt'
+import { JwtService } from "@nestjs/jwt";
+import { jwtConstants } from "../../../../constants";
+import { jwtAuthGuard } from "src/Guards/jwt-auth.guard";
+@Controller()
+export class passwordResetController{
+constructor(private passwordResetService:passwordResetService,
+    private mailerService:MailerService,
+    private  dealerDetailService:DealerDetailsService,
+    private jwtService:JwtService
+    ){}
+
+    
+    @Post('forget')
+    async forget(
+        @Body('email') email:string 
+    ){
+
+        const  code = crypto.randomBytes(8).toString('hex');
+
+        const user = await this.dealerDetailService.findUser(email);
+        if(!user){
+            throw new UnauthorizedException("user not found")
+        }
+        /*await this.passwordResetService.create({
+                email,token
+        })*/
+        const payload = {userid:user.userid,username:user.username};
+        const secretOrKey=jwtConstants.Resetd_secret;
+        
+                  const token = this.jwtService.sign(payload,{secret:secretOrKey,expiresIn:"2h"});
+        const url =` https://localhost:3000/dealer/forgetpassword/reset/${token}`;
+
+          await this.mailerService.sendMail({
+            to:email,
+            subject:'reset your password',
+            html: `<p style="color:red;font-size:10px">Here the code to add your field and update password</p><br><br>
+            <center>${token}</center>
+            `
+          });
+          
+          return {
+            token:token,
+            message:'please check your mail'
+          }
+
+    }
+
+
+    /* @UseGuards(jwtAuthGuard)
+     @Get()
+     async getprofile(@Request() req){
+        return req.user
+     }
+*/
+
+
+
+/*    @Post('reset')
+  async reset(
+        @Body('password') password:string,
+        @Body('password_confirm') password_confirm:string,){
+    
+       
+            if(password !== password_confirm){
+                throw new UnauthorizedException("password does not match")
+            }
+            else{
+ 
+
+                 
+
+                const user = await this.dealerDetailService.findUser(user.userid);
+
+                if(!user){throw new UnauthorizedException("User not found")}
+                else{
+
+                    const hashpassword = await bcrypt.hash(password,12);
+                    await this.dealerDetailService.updateOne(user.userid,{password:hashpassword});
+                    return{
+                        message:"success",
+                    }
+                }
+
+            }
+
+
+    }*/
+}

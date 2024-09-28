@@ -1,0 +1,56 @@
+1.dealer signup process:
+
+ 
+
+
+
+-upi transaction
+-contract form
+
+
+ 
+
+
+//images,pan card,gst certificate,fssai certificate
+
+2.gst verification:
+
+
+3.pan verification:
+
+
+4.fssai verification:
+
+
+5.profile:
+
+6.status:  
+active/offline
+
+
+
+7.product add:
+
+  
+8.listing using filtering
+
+9.current order management
+
+
+
+cancelled_on
+
+10.payout
+
+11.promotion
+
+12.order history
+
+13.rating
+
+14.queries
+
+feb20:
+Today add additional data to product table and make status for two tables dealer and product and move on to create 8   nestjs resource for endpoint  route and then finally create order entity for order management route.
+
+

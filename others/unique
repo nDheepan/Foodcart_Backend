@@ -1,0 +1,18 @@
+public async countUnique(after?: Date, before?: Date): Promise<number> {
+    const filters: ArticleAnalyticsFilter = {
+      before: before.toISOString() as any,
+      after: after.toISOString() as any,
+      // before,
+      // after
+    };
+
+    const result = await this.getRepository()
+      .createQueryBuilder()
+      .select('COUNT(DISTINCT(objectId))', 'unique')
+      .andWhere('createdAt >= :after')
+      .andWhere('createdAt < :before')
+      .setParameters(filters)
+      .getRawOne();
+
+    return result.unique;
+  } 

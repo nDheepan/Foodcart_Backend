@@ -1,0 +1,3 @@
+To genrate random key :https://generate-random.org/
+To secure authenticate :https://github.com/marcomelilli/nestjs-email-authentication/blob/master/src/auth/auth.controller.ts
+nodejs forget password:https://medium.com/@akmuthumala/forgot-and-reset-password-using-nodejs-with-email-otp-57c11514317e

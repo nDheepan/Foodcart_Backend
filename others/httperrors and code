@@ -1,0 +1,30 @@
+xx Informational: These status codes indicate that the server has received the request and is continuing the process. Examples include:
+
+100 Continue
+101 Switching Protocols
+2xx Success: These status codes indicate that the request was successfully received, understood, and accepted. Examples include:
+
+200 OK
+201 Created
+204 No Content
+
+3xx Redirection: These status codes indicate that further action needs to be taken to complete the request. They are often used for redirects. Examples include:
+
+301 Moved Permanently
+302 Found (Temporary Redirect)
+304 Not Modified
+
+4xx Client Error: These status codes indicate that there was an error on the client's part, such as an invalid request or unauthorized access. Examples include:
+
+400 Bad Request
+401 Unauthorized
+403 Forbidden
+404 Not Found
+
+
+5xx Server Error: These status codes indicate that there was an error on the server's part while trying to fulfill the request. Examples include:
+
+500 Internal Server Error
+502 Bad Gateway
+503 Service Unavailable
+504 Gateway Timeout
